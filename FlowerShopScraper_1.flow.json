@@ -1,0 +1,11 @@
+WebAutomation.LaunchChrome.LaunchChrome Url: $'''https://search.yahoo.co.jp/search?p=お花''' WindowState: WebAutomation.BrowserWindowState.Normal ClearCache: True ClearCookies: True WaitForPageToLoadTimeout: 60 Timeout: 60 PiPUserDataFolderMode: WebAutomation.PiPUserDataFolderModeEnum.AutomaticProfile TargetDesktop: $'''{\"DisplayName\":\"ローカル コンピューター\",\"Route\":{\"ServerType\":\"Local\",\"ServerAddress\":\"\"},\"DesktopType\":\"local\"}''' BrowserInstance=> Browser
+WebAutomation.GetDetailsOfWebPage BrowserInstance: Browser DetailsType: WebAutomation.DetailsType.Text Details=> WebPageProperty
+SET DataToExtract TO WebPageProperty
+File.WriteText File: $'''C:\\Users\\薫\\Desktop\\result.html''' TextToWrite: WebPageProperty AppendNewLine: True IfFileExists: File.IfFileExists.Overwrite Encoding: File.FileEncoding.UTF8
+File.ReadTextFromFile.ReadText File: $'''C:\\Users\\薫\\Desktop\\result.html''' Encoding: File.TextFileEncoding.UTF8 Content=> FileContents
+Text.ParseText.RegexParse Text: FileContents TextToFind: $'''https://[a-zA-Z0-9\\.\\-/]+''' StartingPosition: 0 IgnoreCase: False OccurrencePositions=> Positions Matches=> Matches
+Variables.RemoveDuplicateItemsFromList List: Matches IgnoreCase: False
+File.WriteText File: $'''C:\\Users\\薫\\Desktop\\FlowerShops.csv''' AppendNewLine: True IfFileExists: File.IfFileExists.Overwrite Encoding: File.FileEncoding.UTF8
+LOOP FOREACH CurrentItem IN Matches
+    File.WriteText File: $'''C:\\Users\\薫\\Desktop\\FlowerShops.csv''' TextToWrite: CurrentItem AppendNewLine: True IfFileExists: File.IfFileExists.Append Encoding: File.FileEncoding.UTF8
+END
